@@ -1,0 +1,94 @@
+<template>
+    <form @submit="sentMessage()" v-on:submit.prevent>
+        <input type='textarea' v-model="inputText" />
+    </form>
+
+    <button @click="sentMessage()">发送</button>
+
+    选择存档导入<input id="db-file" type="file" @change="load" />
+</template>
+<script setup lang="ts">
+import { ref } from "vue";
+import { useMessagesStore } from "../../stores/messagesStore"
+import { useScenesStore } from "../../stores/sceneStore"
+import { Updater } from "./updater"
+
+const messageStroe = useMessagesStore();
+const inputText = ref("")
+function read(file: any) {
+    // 3、获取文件
+
+    // 4、创建读取器
+    let reader = new FileReader();
+    // 5、开始读取
+    reader.readAsText(file);
+    // 6、监听文件的读取状态
+    reader.onload = () => {
+        const sceneStroe = useScenesStore();
+        sceneStroe.load(reader.result as string)
+        console.log(reader.result)
+    };
+}
+const load = (e: any) => {
+    //文件夹里面所有文件        
+    var files = e.target.files;
+    read(files[0])
+};
+function sentMessage() {
+    const command = inputText.value
+    messageStroe.push(inputText.value)
+    const messageBox = document.getElementById("message-box")
+    if (messageBox)
+        messageBox.scrollTop = messageBox?.scrollHeight;
+    //理论上会有收发过程，将需要的操作发给服务端的system，
+    //进行处理后发回信息给客户端的system层
+    //接着客户端的system层操作SceneStore（显示层的状态）
+    //这里暂时先不写system层，所以直接操作SceneStore
+    if (/^create/.test(command)) {
+        const updater = new Updater();
+        const textContent = command.split(" ")
+        if (textContent) {
+
+            const actor = {} as any
+            if (textContent[1]) {
+                actor.name = textContent[1];
+                actor.postion = {}
+
+            }
+            if (textContent[2]) {
+                actor.postion.x = parseInt(textContent[2])
+            }
+            if (textContent[3]) {
+                actor.postion.y = parseInt(textContent[3])
+            }
+            updater.actors = [actor]
+            const sceneStroe = useScenesStore();
+            sceneStroe.update(updater)
+        }
+
+
+    }
+    if (/^export/.test(command)) {
+        const textContent = command.split(" ")
+        if (textContent[1]) {
+            const sceneStroe = useScenesStore();
+            const sceneState = sceneStroe.getState();
+            const ele = document.createElement("a");
+            let blob = new Blob([JSON.stringify(sceneState)]);
+            var a = document.createElement("a");
+            var url = window.URL.createObjectURL(blob);
+            var filename = textContent[1] + ".json";
+            a.href = url;
+            a.download = filename;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+    }
+
+    inputText.value = ""
+
+}
+
+
+</script>
