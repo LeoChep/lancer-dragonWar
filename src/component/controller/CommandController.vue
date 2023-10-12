@@ -12,6 +12,9 @@ import { ref } from "vue";
 import { useMessagesStore } from "../../stores/messagesStore"
 import { useScenesStore } from "../../stores/sceneStore"
 import { Updater } from "./updater"
+import { useDirector } from "@/stores/perform/director";
+
+
 
 const messageStroe = useMessagesStore();
 const inputText = ref("")
@@ -48,7 +51,6 @@ function sentMessage() {
         const updater = new Updater();
         const textContent = command.split(" ")
         if (textContent) {
-
             const actor = {} as any
             if (textContent[1]) {
                 actor.name = textContent[1];
@@ -83,9 +85,24 @@ function sentMessage() {
             a.click();
             window.URL.revokeObjectURL(url);
         }
+       
+
 
     }
-
+    if (/^setCamere/.test(command)) {
+            console.log(command)
+            const director=useDirector();
+            console.log(command)
+            const camereState=director.getCamereState();
+           
+            const textContent = command.split(" ")
+            if (textContent[1]) {
+                camereState.x = parseInt(textContent[1])
+            }
+            if (textContent[2]) {
+                camereState.y = parseInt(textContent[2])
+            }
+        }
     inputText.value = ""
 
 }

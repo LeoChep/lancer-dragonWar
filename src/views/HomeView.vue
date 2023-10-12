@@ -9,7 +9,7 @@
     <div id="game-box">
       <Game></Game>
     </div>
-    <div id="message-box">
+    <div id="message-box" >
       <MessageBox></MessageBox>
     </div>
     <div id="controller-box">
@@ -37,22 +37,25 @@
   grid-row-end: 5;
   background-color:red;
   text-align: center;
+  z-index: 1;
 }
 #message-box {
   grid-column-start: 5;
   grid-column-end: 6;
   grid-row-start: 1;
-  grid-row-end: 5;
-  background-color:blue;
+  grid-row-end: 6;
+  background-color:rgb(0, 0, 255,0.2);
   text-align: left;
   overflow: scroll;
+  z-index: 2;
 }
 #controller-box {
   grid-column-start: 1;
-  grid-column-end: 6;
+  grid-column-end: 5;
   grid-row-start: 5;
   grid-row-end: 6;
-  background-color:yellow;
+  background-color:rgb(255, 255, 0,0.2);
   text-align: left;
+  z-index: 2;
 }
 </style>

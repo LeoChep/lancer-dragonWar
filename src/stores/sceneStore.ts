@@ -6,6 +6,7 @@ interface Message {
 }
 interface SceneState {
   actorStates: ActorState[];
+  
 }
 interface Position {
   x: number;
