@@ -11,9 +11,7 @@
 import { ref } from "vue";
 import { useMessagesStore } from "../../stores/messagesStore"
 import { useScenesStore } from "../../stores/sceneStore"
-import { Updater } from "./updater"
-import { useDirector } from "@/stores/perform/director";
-
+import {excuteResponse, sendToServer} from "../../client/easyClient"
 
 
 const messageStroe = useMessagesStore();
@@ -46,63 +44,8 @@ function sentMessage() {
     //理论上会有收发过程，将需要的操作发给服务端的system，
     //进行处理后发回信息给客户端的system层
     //接着客户端的system层操作SceneStore（显示层的状态）
-    //这里暂时先不写system层，所以直接操作SceneStore
-    if (/^create/.test(command)) {
-        const updater = new Updater();
-        const textContent = command.split(" ")
-        if (textContent) {
-            const actor = {} as any
-            if (textContent[1]) {
-                actor.name = textContent[1];
-                actor.postion = {}
-
-            }
-            if (textContent[2]) {
-                actor.postion.x = parseInt(textContent[2])
-            }
-            if (textContent[3]) {
-                actor.postion.y = parseInt(textContent[3])
-            }
-            updater.actors = [actor]
-            const sceneStroe = useScenesStore();
-            sceneStroe.update(updater)
-        }
-
-
-    }
-    if (/^export/.test(command)) {
-        const textContent = command.split(" ")
-        if (textContent[1]) {
-            const sceneStroe = useScenesStore();
-            const sceneState = sceneStroe.getState();
-            const ele = document.createElement("a");
-            let blob = new Blob([JSON.stringify(sceneState)]);
-            var a = document.createElement("a");
-            var url = window.URL.createObjectURL(blob);
-            var filename = textContent[1] + ".json";
-            a.href = url;
-            a.download = filename;
-            a.click();
-            window.URL.revokeObjectURL(url);
-        }
-       
-
-
-    }
-    if (/^setCamere/.test(command)) {
-            console.log(command)
-            const director=useDirector();
-            console.log(command)
-            const camereState=director.getCamereState();
-           
-            const textContent = command.split(" ")
-            if (textContent[1]) {
-                camereState.x = parseInt(textContent[1])
-            }
-            if (textContent[2]) {
-                camereState.y = parseInt(textContent[2])
-            }
-        }
+    //这里暂时先直接操纵客户端接收层
+    sendToServer(command)
     inputText.value = ""
 
 }

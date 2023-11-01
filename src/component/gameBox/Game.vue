@@ -7,8 +7,7 @@
                 :x="actor.postion.x"
                 :y="actor.postion.y"
                 ></v-circle>
-            </v-group>
-            
+            </v-group>    
         </v-layer>
     </v-stage>
 </template>
@@ -17,8 +16,6 @@
 import { useScenesStore } from '@/stores/sceneStore';
 import { useDirector} from "@/stores/perform/director"
 import { computed, onMounted, ref, watch } from 'vue';
-import { Layer } from 'konva/lib/Layer';
-
 interface Position {
     x: number;
     y: number;
@@ -30,7 +27,6 @@ interface ActorState {
 const sceneStroe = useScenesStore();
 const director=useDirector();
 const state = computed(() => {
-
     return sceneStroe.getState()
 })
 const layer=ref()
@@ -41,7 +37,6 @@ onMounted(()=>{
     configKonva.value.width=width
 })
 const configKonva = ref({
-   
     width: 1327,
     height: 1000,
 })
@@ -68,13 +63,13 @@ const configCircle = {
     stroke: "black",
     strokeWidth: 4
 }
-const drawActor =  (actor:ActorState) =>{
-    const actorCircle={} as {x:number,y:number}
-    Object.assign(actorCircle,configCircle)
-    actorCircle.x=actor.postion.x;
-    actorCircle.y=actor.postion.y;
-    return actorCircle;
-}
+// const drawActor =  (actor:ActorState) =>{
+//     const actorCircle={} as {x:number,y:number}
+//     Object.assign(actorCircle,configCircle)
+//     actorCircle.x=actor.postion.x;
+//     actorCircle.y=actor.postion.y;
+//     return actorCircle;
+// }
 
 
 </script>
