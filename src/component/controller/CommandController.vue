@@ -1,4 +1,5 @@
 <template>
+    {{ peerId }}
     <form @submit="sentMessage()" v-on:submit.prevent>
         <input type='textarea' v-model="inputText" />
     </form>
@@ -8,14 +9,32 @@
     选择存档导入<input id="db-file" type="file" @change="load" />
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import { useMessagesStore } from "../../stores/messagesStore"
 import { useScenesStore } from "../../stores/sceneStore"
-import {excuteResponse, sendToServer} from "../../client/easyClient"
+import { EasyClient, excuteResponse, sendToServer } from "../../client/easyClient"
+import { PeerMan } from "@/tools/peerMan";
+import { EasyServer } from "@/server/easyServer";
+import { EasyClientReciver } from "@/client/easyClientReciver";
+import { EasyServerReciver } from "@/server/easyServerReciver";
 
 
 const messageStroe = useMessagesStore();
 const inputText = ref("")
+//这里创建client实例，作为客户端，如果是房主，额外创建server实例
+//为client实例指定对应的serverID，并创建连接，
+//即使是房主，也由自己的client实例连接serverID，
+const peerId = ref("")
+const clientReciver = new EasyClientReciver();
+const serverReciver = new EasyServerReciver();
+serverReciver.onInit(() => {
+    peerId.value = serverReciver.serverIns.id as string;
+    console.log("onInit")
+    clientReciver.onInit(() => {
+        console.log("clientReciver onInit")
+        clientReciver.connect(peerId.value)
+    })
+})
 function read(file: any) {
     // 3、获取文件
 
@@ -45,7 +64,17 @@ function sentMessage() {
     //进行处理后发回信息给客户端的system层
     //接着客户端的system层操作SceneStore（显示层的状态）
     //这里暂时先直接操纵客户端接收层
-    sendToServer(command)
+    if (/^conn/.test(command)) {
+        const textContent = command.split(" ");
+
+        clientReciver.connect(textContent[1])
+    }
+    if (/^send/.test(command)) {
+        const textContent = command.split(" ");
+
+        clientReciver.sendToServer(textContent[1])
+    }
+    clientReciver.sendToServer(command)
     inputText.value = ""
 
 }

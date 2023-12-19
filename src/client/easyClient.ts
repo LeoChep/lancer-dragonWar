@@ -1,8 +1,9 @@
-import { useScenesStore } from "../stores/sceneStore"
-import { Updater } from "../component/controller/updater"
+import { EasyServer } from "./../server/easyServer";
+import { useScenesStore } from "../stores/sceneStore";
+import { Updater } from "../component/controller/updater";
 import { useDirector } from "@/stores/perform/director";
 export function excuteResponse(res: string) {
-    const command=res;
+  const command = res;
   if (/^create/.test(command)) {
     const updater = new Updater();
     const textContent = command.split(" ");
@@ -57,11 +58,36 @@ export function excuteResponse(res: string) {
   }
 }
 //这里暂时没有服务端，直接发送给自己的接收端
-export function sendToServer(msg:string){
-  excuteResponse(msg)
+//暂时弃用，现在直接使用reciver发送
+export function sendToServer(msg: string) {
+  //这里本来应该调用client的发送接口，但是由于没有接入peerjs系统，所以直接调用server的方法
+  // EasyClient.instans.send(msg)
+  // EasyClient.instans.server?.recive(msg);
+  //excuteResponse(msg)
 }
-class EasyClient{
-  server:any;
-  connection:any;
-  
+export class EasyClient {
+  server: EasyServer | undefined;
+  id:string | undefined;
+  connection: any;
+  static instans: EasyClient;
+  setServer(serverIns: EasyServer): void {
+    this.server = serverIns;
+  }
+  constructor() {}
+  static setIns(clientIns: EasyClient): void {
+    EasyClient.instans = clientIns;
+  }
+
+  recive(msg: string): void {
+    //应用有一层外置的reciver封装，用于接收信息，再传给这层
+    //reciver直接被其他调用
+    //创建房间、游戏时，会初始化对应的reciver（包括server的和clint的）
+    //server再接到连接的时候，也会创建对应的clint对象
+    excuteResponse(msg);
+  }
+  //todo 发送信息给server，操控指令实际上只进行send和recive
+  //暂时弃用
+  send(msg:string):void{
+
+  }
 }
