@@ -4,10 +4,16 @@ export class PeerMan {
   peer: Peer;
   id: string | undefined;
   conns: DataConnection[];
-  constructor() {
-    this.peer = new Peer();
+  constructor(id?: string) {
+    if (id) {
+      this.peer = new Peer(id);
+    } else {
+      this.peer = new Peer();
+    }
+
     this.conns = [];
   }
+
   onOpen(fn: (id: string) => void) {
     this.peer.on("open", (id) => {
       console.log("My peer ID is: " + id);
@@ -32,18 +38,21 @@ export class PeerMan {
       conn.on("data", (data) => {
         this.recive(data, conn);
       });
-      console.log("connect open")
+      conn.on("close",()=>{
+        console.log("disconnect")
+      })
+      console.log("connect open");
       // Send messages
       this.broadcast("Hello!");
     });
   }
   broadcast(msg: any) {
-    let index=0;
+    let index = 0;
     for (let conn of this.conns) {
       index++;
       conn.send(msg);
     }
-    console.log("Send",msg+this.id,this.conns);
+    console.log("Send", msg + this.id, this.conns);
   }
   recive(msg: any, conn: DataConnection) {
     console.log("Received", msg);
@@ -59,4 +68,5 @@ export class PeerMan {
   onConnect(fn: (conn: DataConnection) => void) {
     this.onConnectFns.push(fn);
   }
+  
 }

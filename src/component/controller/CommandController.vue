@@ -1,5 +1,6 @@
 <template>
     {{ peerId }}
+    <button @click="createRoomClick()">创建房间</button>
     <form @submit="sentMessage()" v-on:submit.prevent>
         <input type='textarea' v-model="inputText" />
     </form>
@@ -9,12 +10,9 @@
     选择存档导入<input id="db-file" type="file" @change="load" />
 </template>
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from "vue";
+import { ref } from "vue";
 import { useMessagesStore } from "../../stores/messagesStore"
 import { useScenesStore } from "../../stores/sceneStore"
-import { EasyClient, excuteResponse, sendToServer } from "../../client/easyClient"
-import { PeerMan } from "@/tools/peerMan";
-import { EasyServer } from "@/server/easyServer";
 import { EasyClientReciver } from "@/client/easyClientReciver";
 import { EasyServerReciver } from "@/server/easyServerReciver";
 
@@ -26,15 +24,19 @@ const inputText = ref("")
 //即使是房主，也由自己的client实例连接serverID，
 const peerId = ref("")
 const clientReciver = new EasyClientReciver();
-const serverReciver = new EasyServerReciver();
-serverReciver.onInit(() => {
-    peerId.value = serverReciver.serverIns.id as string;
-    console.log("onInit")
-    clientReciver.onInit(() => {
-        console.log("clientReciver onInit")
-        clientReciver.connect(peerId.value)
+function createRoomClick() {
+    const serverReciver = new EasyServerReciver("server");
+
+    serverReciver.onInit(() => {
+        peerId.value = serverReciver.serverIns.id as string;
+        console.log("onInit")
+        clientReciver.onInit(() => {
+            console.log("clientReciver onInit")
+            clientReciver.connect(peerId.value)
+        })
     })
-})
+}
+
 function read(file: any) {
     // 3、获取文件
 

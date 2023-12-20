@@ -14,12 +14,12 @@ export class EasyServerReciver {
       fn();
     }
   }
-  constructor() {
+  constructor(id?:string) {
     this.serverIns = new EasyServer();
     this.serverIns.reply = (msg: string, id: string) => {
       this.send(msg, id);
     };
-    this.peerMan = new PeerMan();
+    this.peerMan = new PeerMan(id);
     this.peerMan.onOpen((id) => {
       this.serverIns.id = id;
       this.isInited = true;

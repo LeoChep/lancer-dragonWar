@@ -57,14 +57,7 @@ export function excuteResponse(res: string) {
     }
   }
 }
-//这里暂时没有服务端，直接发送给自己的接收端
-//暂时弃用，现在直接使用reciver发送
-export function sendToServer(msg: string) {
-  //这里本来应该调用client的发送接口，但是由于没有接入peerjs系统，所以直接调用server的方法
-  // EasyClient.instans.send(msg)
-  // EasyClient.instans.server?.recive(msg);
-  //excuteResponse(msg)
-}
+
 export class EasyClient {
   server: EasyServer | undefined;
   id:string | undefined;
