@@ -15,6 +15,7 @@ import { useMessagesStore } from "../../stores/messagesStore"
 import { useScenesStore } from "../../stores/sceneStore"
 import { EasyClientReciver } from "@/client/easyClientReciver";
 import { EasyServerReciver } from "@/server/easyServerReciver";
+import { LStorage } from "@/tools/storageMan";
 
 
 const messageStroe = useMessagesStore();
@@ -24,19 +25,51 @@ const inputText = ref("")
 //即使是房主，也由自己的client实例连接serverID，
 const peerId = ref("")
 const clientReciver = new EasyClientReciver();
+function checkHasRoom() {
+    //这个操作本该有专门的store负责，目前还没有
+    const server = LStorage.get('serverRoom') // { name: 'zhangsan' }
+    const serverID = server?.name;
+    if (serverID != undefined && serverID != null)
+        createRoomServer(serverID);
+}
+function checkHasConnectRoom() {
+    //这个操作本该有专门的store负责，目前还没有
+    const server = LStorage.get('connectRoom') // { name: 'zhangsan' }
+    const serverID = server?.name;
+    if (serverID != undefined && serverID != null) {
+        clientReciver.peerMan.onConnect(() => {
+            console.log("requestScene")
+            clientReciver.sendToServer("requestScene")
+        })
+        clientReciver.connect(serverID);
+
+    }
+
+}
+checkHasRoom();
+clientReciver.onInit(() => {
+    checkHasConnectRoom();
+})
+
 function createRoomClick() {
-    const serverReciver = new EasyServerReciver("server");
+    createRoomServer("server20231225")
+}
+function createRoomServer(name: string) {
+    const serverReciver = new EasyServerReciver(name);
 
     serverReciver.onInit(() => {
         peerId.value = serverReciver.serverIns.id as string;
         console.log("onInit")
+
         clientReciver.onInit(() => {
             console.log("clientReciver onInit")
             clientReciver.connect(peerId.value)
+            //这个操作本该有专门的store负责，目前还没有
+            LStorage.set('serverRoom', { name: name })
         })
     })
-}
 
+}
 function read(file: any) {
     // 3、获取文件
 

@@ -38,12 +38,15 @@ export class PeerMan {
       conn.on("data", (data) => {
         this.recive(data, conn);
       });
-      conn.on("close",()=>{
-        console.log("disconnect")
-      })
+      conn.on("close", () => {
+        console.log("disconnect");
+      });
       console.log("connect open");
       // Send messages
       this.broadcast("Hello!");
+      for (let onConnectFn of this.onConnectFns) {
+        onConnectFn(conn);
+      }
     });
   }
   broadcast(msg: any) {
@@ -68,5 +71,4 @@ export class PeerMan {
   onConnect(fn: (conn: DataConnection) => void) {
     this.onConnectFns.push(fn);
   }
-  
 }

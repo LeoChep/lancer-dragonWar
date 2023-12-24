@@ -1,3 +1,4 @@
+import { useScenesStore } from './../stores/sceneStore';
 import type { EasyClient } from "@/client/easyClient";
 
 export function sendToClients(res:string){
@@ -22,13 +23,22 @@ export class EasyServer{
         //reciver会创建其对应的peerMan，
         //peerMan保留他的connections
         //peerMan包含一个peer对象
+        //这里没有事件系统，直接进行判断，后续需要修改
+        console.log("recive",msg)
+        if (msg=='requestScene'){
+            console.log("some one requestScene")
+            const sceneStore=useScenesStore();
+            const state=sceneStore.getState();
+            const data=JSON.stringify(state)
+            this.reply(JSON.stringify({type:'replyScene',data:data}),id)
+        }
         //
         //这里直接广播给每个订阅者
         this.broadcast(msg)
     }
 
     broadcast(msg:string):void{
-        //本来应该调用peerjs系统，但是由于系统还没有接入，所以这里直接调用client
+      
         for (let client of this.subscribers ){
             const id =client.id as string;
             this.reply(msg,id)

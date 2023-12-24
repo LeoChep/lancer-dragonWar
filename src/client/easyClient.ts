@@ -1,9 +1,18 @@
+import { useScenesStore } from './../stores/sceneStore';
 import { EasyServer } from "./../server/easyServer";
-import { useScenesStore } from "../stores/sceneStore";
 import { Updater } from "../component/controller/updater";
 import { useDirector } from "@/stores/perform/director";
 export function excuteResponse(res: string) {
   const command = res;
+  try{
+    const replyObject=JSON.parse(res)
+    if (replyObject.type=='replyScene'){
+         useScenesStore().load(replyObject.data)
+    }
+  }catch{
+
+  }
+
   if (/^create/.test(command)) {
     const updater = new Updater();
     const textContent = command.split(" ");
