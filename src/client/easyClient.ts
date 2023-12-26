@@ -2,6 +2,7 @@ import { useScenesStore } from './../stores/sceneStore';
 import { EasyServer } from "./../server/easyServer";
 import { Updater } from "../component/controller/updater";
 import { useDirector } from "@/stores/perform/director";
+//不应该在这里，应该拆分更多层分别交给对应的逻辑链路计算，并有对应的逻辑链路调用对应的store
 export function excuteResponse(res: string) {
   const command = res;
   try{
@@ -14,6 +15,29 @@ export function excuteResponse(res: string) {
   }
 
   if (/^create/.test(command)) {
+    const updater = new Updater();
+    const textContent = command.split(" ");
+    if (textContent) {
+      const actor = {} as any;
+      if (textContent[1]) {
+        actor.type = textContent[1];
+      }
+      if (textContent[2]) {
+        actor.name = textContent[2];
+        actor.postion = {};
+      }
+      if (textContent[3]) {
+        actor.postion.x = parseInt(textContent[3]);
+      }
+      if (textContent[4]) {
+        actor.postion.y = parseInt(textContent[4]);
+      }
+      updater.actors = [actor];
+      const sceneStroe = useScenesStore();
+      sceneStroe.update(updater);
+    }
+  }
+  if (/^move/.test(command)) {
     const updater = new Updater();
     const textContent = command.split(" ");
     if (textContent) {

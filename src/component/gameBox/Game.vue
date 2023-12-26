@@ -3,27 +3,23 @@
         <v-layer draggable="true" ref="layer">
             <v-group >
                 <v-image :config="background"></v-image>
-                <v-circle v-for="actor in state.actorStates"  :config="configCircle" 
+                <VToken v-for="actor in state.actorStates" :actor="actor"></VToken>
+                <!-- <v-circle v-for="actor in state.actorStates"  :config="configCircle" 
                 :x="actor.postion.x"
                 :y="actor.postion.y"
-                ></v-circle>
+                ></v-circle> -->
+                
             </v-group>    
         </v-layer>
     </v-stage>
 </template>
 
-<script setup lang="ts">
+<script setup >
 import { useScenesStore } from '@/stores/sceneStore';
 import { useDirector} from "@/stores/perform/director"
+import  VToken from "./tokenComponent/VToken.vue"
 import { computed, onMounted, ref, watch } from 'vue';
-interface Position {
-    x: number;
-    y: number;
-}
-interface ActorState {
-    name: string;
-    postion: Position;
-}
+
 const sceneStroe = useScenesStore();
 const director=useDirector();
 const state = computed(() => {

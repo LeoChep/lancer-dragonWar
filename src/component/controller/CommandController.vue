@@ -10,66 +10,31 @@
     选择存档导入<input id="db-file" type="file" @change="load" />
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useMessagesStore } from "../../stores/messagesStore"
 import { useScenesStore } from "../../stores/sceneStore"
 import { EasyClientReciver } from "@/client/easyClientReciver";
 import { EasyServerReciver } from "@/server/easyServerReciver";
 import { LStorage } from "@/tools/storageMan";
+import  { useClientReciverStore } from "@/stores/clientReciverStore";
+import { useServerReciverStore } from "@/stores/serverReciverStore";
 
+const clientReciverStore=useClientReciverStore();
 
+const serverReciverStore=useServerReciverStore();
 const messageStroe = useMessagesStore();
 const inputText = ref("")
 //这里创建client实例，作为客户端，如果是房主，额外创建server实例
 //为client实例指定对应的serverID，并创建连接，
 //即使是房主，也由自己的client实例连接serverID，
-const peerId = ref("")
-const clientReciver = new EasyClientReciver();
-function checkHasRoom() {
-    //这个操作本该有专门的store负责，目前还没有
-    const server = LStorage.get('serverRoom') // { name: 'zhangsan' }
-    const serverID = server?.name;
-    if (serverID != undefined && serverID != null)
-        createRoomServer(serverID);
-}
-function checkHasConnectRoom() {
-    //这个操作本该有专门的store负责，目前还没有
-    const server = LStorage.get('connectRoom') // { name: 'zhangsan' }
-    const serverID = server?.name;
-    if (serverID != undefined && serverID != null) {
-        clientReciver.peerMan.onConnect(() => {
-            console.log("requestScene")
-            clientReciver.sendToServer("requestScene")
-        })
-        clientReciver.connect(serverID);
 
-    }
-
-}
-checkHasRoom();
-clientReciver.onInit(() => {
-    checkHasConnectRoom();
-})
-
+const clientReciver = clientReciverStore.getIns();
+const serverReciver = serverReciverStore.getIns();
+const peerId = computed(()=>serverReciverStore.id);
 function createRoomClick() {
-    createRoomServer("server20231225")
+    serverReciverStore.createRoomServer("server20231225")
 }
-function createRoomServer(name: string) {
-    const serverReciver = new EasyServerReciver(name);
 
-    serverReciver.onInit(() => {
-        peerId.value = serverReciver.serverIns.id as string;
-        console.log("onInit")
-
-        clientReciver.onInit(() => {
-            console.log("clientReciver onInit")
-            clientReciver.connect(peerId.value)
-            //这个操作本该有专门的store负责，目前还没有
-            LStorage.set('serverRoom', { name: name })
-        })
-    })
-
-}
 function read(file: any) {
     // 3、获取文件
 
