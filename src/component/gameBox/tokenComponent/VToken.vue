@@ -1,17 +1,26 @@
 <template>
     <v-group v-if="isLoaded" :config="configCircle" :x="actor.postion.x" :y="actor.postion.y" :width="config.size.sizeX"
-        :height="config.size.sizeY">
+        :height="config.size.sizeY" draggable="true" ref="vTokenRef" @dragend="handleDragEnd">
         <v-image :config="configCircle" :width="config.size.sizeX" :height="config.size.sizeY"
             :image="config.image"></v-image>
     </v-group>
+    <DragController ref="controller"></DragController>
 </template>
 <script setup name="VToken" >
 import { ref } from 'vue';
-
+import DragController from "../../controller/DragController.vue"
 const props = defineProps(['actor'])
-const url = new URL("../../../assets/monster/"+props.actor.type+".json", import.meta.url);
+const url = new URL("../../../assets/monster/" + props.actor.type + ".json", import.meta.url);
 const config = ref({})
 const isLoaded = ref(false)
+const vTokenRef = ref()
+const controller = ref()
+const handleDragEnd = (event) => {
+    console.log(event)
+    const pos = { x: event.target.attrs.x, y: event.target.attrs.y }
+    const { move } = controller.value
+    move(props.actor, pos.x, pos.y)
+}
 const configCircle = ref({
     radius: 10,
     fill: "red",
@@ -30,11 +39,9 @@ fetch(url)
         const tokenUrl = new URL("../../../assets/monster/token/" + data.token, import.meta.url);
         config.value.image = imageObj1
         imageObj1.src = tokenUrl;
-        configCircle.value.clipFunc = function (ctx)  {
+        configCircle.value.clipFunc = function (ctx) {
             ctx.arc(data.size.sizeX / 2, data.size.sizeY / 2, 50, 0, Math.PI * 2, false);
         }
-    
-       
     });
 
 

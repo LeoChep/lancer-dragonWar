@@ -1,18 +1,17 @@
-import { useScenesStore } from './../stores/sceneStore';
+import { useScenesStore } from "./../stores/sceneStore";
 import { EasyServer } from "./../server/easyServer";
 import { Updater } from "../component/controller/updater";
 import { useDirector } from "@/stores/perform/director";
+import { useMessagesStore } from "@/stores/messagesStore";
 //不应该在这里，应该拆分更多层分别交给对应的逻辑链路计算，并有对应的逻辑链路调用对应的store
 export function excuteResponse(res: string) {
   const command = res;
-  try{
-    const replyObject=JSON.parse(res)
-    if (replyObject.type=='replyScene'){
-         useScenesStore().load(replyObject.data)
+  try {
+    const replyObject = JSON.parse(res);
+    if (replyObject.type == "replyScene") {
+      useScenesStore().load(replyObject.data);
     }
-  }catch{
-
-  }
+  } catch {}
 
   if (/^create/.test(command)) {
     const updater = new Updater();
@@ -57,6 +56,16 @@ export function excuteResponse(res: string) {
       sceneStroe.update(updater);
     }
   }
+  console.log("testspeak",command)
+  if (/^speak/.test(command)) {
+    console.log(command)
+    const messageStroe = useMessagesStore();
+    const textContent = command.split(" ");
+    if (textContent[1]) {
+      const message = JSON.parse(textContent[1]);
+      messageStroe.push(message.messageString,message.speaker)
+    }
+  }
   if (/^export/.test(command)) {
     const textContent = command.split(" ");
     if (textContent[1]) {
@@ -93,7 +102,8 @@ export function excuteResponse(res: string) {
 
 export class EasyClient {
   server: EasyServer | undefined;
-  id:string | undefined;
+  id: string | undefined;
+  name: string | undefined;
   connection: any;
   static instans: EasyClient;
   setServer(serverIns: EasyServer): void {
@@ -113,7 +123,5 @@ export class EasyClient {
   }
   //todo 发送信息给server，操控指令实际上只进行send和recive
   //暂时弃用
-  send(msg:string):void{
-
-  }
+  send(msg: string): void {}
 }

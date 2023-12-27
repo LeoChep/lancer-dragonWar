@@ -32,6 +32,16 @@ export class EasyServer{
             const data=JSON.stringify(state)
             this.reply(JSON.stringify({type:'replyScene',data:data}),id)
         }
+        if (/^register/.test(msg)){
+            const textContent = msg.split(" ");
+            if (textContent[1]){
+                const name=textContent[1];
+                for (let client of this.subscribers){
+                    client.name=name
+                }
+            }
+        }
+        
         //
         //这里直接广播给每个订阅者
         this.broadcast(msg)

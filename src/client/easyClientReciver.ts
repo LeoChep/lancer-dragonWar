@@ -38,6 +38,7 @@ export class EasyClientReciver {
     this.peerMan.connect(id);
     //这个操作本该有专门的store负责，目前还没有
     LStorage.set("connectRoom", { name: id });
+    LStorage.set("serverRoom", null);
     const server = new EasyServer();
     server.id = id;
     this.clientIns.setServer(server);

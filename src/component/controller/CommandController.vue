@@ -1,13 +1,22 @@
 <template>
     {{ peerId }}
+  
     <button @click="createRoomClick()">创建房间</button>
+    选择存档导入<input id="db-file" type="file" @change="load" />
     <form @submit="sentMessage()" v-on:submit.prevent>
         <input type='textarea' v-model="inputText" />
     </form>
 
     <button @click="sentMessage()">发送</button>
-
-    选择存档导入<input id="db-file" type="file" @change="load" />
+    <div>
+        昵称<input type='textarea' v-model="userName" />
+        <form @submit="sentSpeak()" v-on:submit.prevent>
+            <input type='textarea' v-model="speakText" />
+        </form>
+        <button @click="sentSpeak()">发送</button>
+        {{ diceString }}=
+        {{ diceValue }}
+    </div>
 </template>
 <script setup lang="ts">
 import { computed, ref } from "vue";
@@ -16,21 +25,24 @@ import { useScenesStore } from "../../stores/sceneStore"
 import { EasyClientReciver } from "@/client/easyClientReciver";
 import { EasyServerReciver } from "@/server/easyServerReciver";
 import { LStorage } from "@/tools/storageMan";
-import  { useClientReciverStore } from "@/stores/clientReciverStore";
+import { useClientReciverStore } from "@/stores/clientReciverStore";
 import { useServerReciverStore } from "@/stores/serverReciverStore";
+import { parseDiceFormula } from "@/tools/DiceFormulaTrans";
+const diceString=ref("")
+const diceValue=ref("")
+const clientReciverStore = useClientReciverStore();
 
-const clientReciverStore=useClientReciverStore();
-
-const serverReciverStore=useServerReciverStore();
+const serverReciverStore = useServerReciverStore();
 const messageStroe = useMessagesStore();
 const inputText = ref("")
+const speakText = ref("")
 //这里创建client实例，作为客户端，如果是房主，额外创建server实例
 //为client实例指定对应的serverID，并创建连接，
 //即使是房主，也由自己的client实例连接serverID，
 
 const clientReciver = clientReciverStore.getIns();
 const serverReciver = serverReciverStore.getIns();
-const peerId = computed(()=>serverReciverStore.id);
+const peerId = computed(() => serverReciverStore.id);
 function createRoomClick() {
     serverReciverStore.createRoomServer("server20231225")
 }
@@ -54,6 +66,7 @@ const load = (e: any) => {
     var files = e.target.files;
     read(files[0])
 };
+
 function sentMessage() {
     const command = inputText.value
     messageStroe.push(inputText.value)
@@ -78,6 +91,31 @@ function sentMessage() {
     inputText.value = ""
 
 }
+const userName=ref("")
+function sentSpeak() {
+    const speak = speakText.value
+    if (/^roll/.test(speak)) {
+        const textContent = speak.split(" ");
+        const diceInput=textContent[1];
+        const diceF=parseDiceFormula(diceInput)
+   
+        diceString.value=diceF.toString();
+        diceValue.value=diceF.getValue()+"";
+        console.log(diceF.diceResultArr)
+        return;
+    }
+    let command = "speak "
+    const speaker = { name:userName.value}
+    const message = {speaker:speaker,messageString:speak}
+    command+=JSON.stringify(message);
+    //理论上会有收发过程，将需要的操作发给服务端的system，
+    //进行处理后发回信息给客户端的system层
+    //接着客户端的system层操作SceneStore（显示层的状态）
+    //这里暂时先直接操纵客户端接收层
+   
+    clientReciver.sendToServer(command)
+    speakText.value = ""
 
+}
 
 </script>
