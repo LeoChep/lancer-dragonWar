@@ -6,19 +6,21 @@
     </v-group>
     <DragController ref="controller"></DragController>
 </template>
-<script setup name="VToken" >
+<script setup name="VToken" lang="ts">
 import { ref } from 'vue';
-import DragController from "../../controller/DragController.vue"
+import DragController from "@/component/controller/DragController.vue"
+import type { ContainerConfig } from 'konva/lib/Container';
 const props = defineProps(['actor'])
-const url = new URL("../../../assets/monster/" + props.actor.type + ".json", import.meta.url);
-const config = ref({})
+const url = "asset/monster/" + props.actor.type + ".json"
+const config = ref({} as any)
 const isLoaded = ref(false)
 const vTokenRef = ref()
 const controller = ref()
-const handleDragEnd = (event) => {
+const handleDragEnd = (event: { target: { attrs: { x: any; y: any; }; }; }) => {
     console.log(event)
     const pos = { x: event.target.attrs.x, y: event.target.attrs.y }
     const { move } = controller.value
+    console.log(move)
     move(props.actor, pos.x, pos.y)
 }
 const configCircle = ref({
@@ -26,7 +28,7 @@ const configCircle = ref({
     fill: "red",
     stroke: "black",
     strokeWidth: 10,
-})
+} as ContainerConfig )
 fetch(url)
     .then((response) => response.json())
     .then((data) => {
@@ -36,11 +38,11 @@ fetch(url)
         imageObj1.onload = function () {
             isLoaded.value = true;
         };
-        const tokenUrl = new URL("../../../assets/monster/token/" + data.token, import.meta.url);
+        const tokenUrl ="asset/monster/token/" + data.token
         config.value.image = imageObj1
         imageObj1.src = tokenUrl;
         configCircle.value.clipFunc = function (ctx) {
-            ctx.arc(data.size.sizeX / 2, data.size.sizeY / 2, 50, 0, Math.PI * 2, false);
+            ctx.ellipse(data.size.sizeX / 2, data.size.sizeY / 2, data.size.sizeX/2,data.size.sizeY/2, 0, 0,Math.PI * 2, false);
         }
     });
 

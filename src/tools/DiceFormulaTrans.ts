@@ -10,12 +10,12 @@ function rollxdy(xdy: string) {
   console.log("rollxdy", xdy);
   const numbers = xdy.split("d");
   const range = numbers[1];
-  let result = { value: 0, diceArr: [] as number[] };
+  let result = { value: 0, diceArr: { arr: [] as number[], text: xdy } };
   const x = parseInt(numbers[0]);
   for (let index = 1; index <= x; index++) {
     const resultValue = roll(parseInt(range));
     result.value += resultValue;
-    result.diceArr.push(resultValue);
+    result.diceArr.arr.push(resultValue);
   }
   return result;
 }
@@ -44,6 +44,20 @@ class Formula {
     const stock1 = [] as (number | string)[];
     let top = 0;
     let index = 0;
+    this.diceResultArr = [];
+    console.log(this.children);
+    if (this.children[0].type == "modifier" && this.children[0].text == "") {
+      if (this.children[1].type == "opearator") {
+        if (
+          this.children[1].text == "d" ||
+          this.children[1].text == "*" ||
+          this.children[1].text == "/"
+        )
+          this.children[0].text = '1';
+        else this.children[0].text = '0';
+      }
+    }
+    console.log(this.children);
     //优先处理每个子项的值，递归求值
     while (index < this.children.length) {
       if (this.children[index].type != "opearator") {
@@ -54,6 +68,7 @@ class Formula {
           }
       } else stock1.push(this.children[index].text);
       if (stock1[top - 1] === "d") {
+      
         const x = stock1[top - 2] as number;
         const y = stock1[top] as number;
         const diceResult = rollxdy(x + "d" + y);
@@ -67,11 +82,10 @@ class Formula {
       top++;
     }
     index = 0;
-    top=0;
+    top = 0;
     const stock = [] as (number | string)[];
     while (index < stock1.length) {
       stock.push(stock1[index]);
-
       //做乘除的运算判断，如果上一个子项是乘除，那么进行运算后将这两个出栈
       //结果保存到被运算的栈对象中
       if (stock[top - 1] === "*") {
@@ -170,10 +184,13 @@ const parseDiceFormula = (str: string) => {
       str = str.replace(raw[index], "&op&");
     }
   }
+  console.log(str);
   //分割字符串
   const result = [] as string[];
   const resultFormula = new Formula();
   const matchs = raw.split(patt);
+
+  console.log(matchs);
   const dicePackRegex = /(\d*)d(\d+)/;
   let formulaIndex = 0;
   let opIndex = 0;

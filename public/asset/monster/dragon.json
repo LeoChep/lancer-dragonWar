@@ -2,8 +2,8 @@
     "name":"dragon",
     "token":"dragon.jpg",
     "size":{
-        "sizeX":200,
-        "sizeY":200
+        "sizeX":100,
+        "sizeY":100
     }
 
 }

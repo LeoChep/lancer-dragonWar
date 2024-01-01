@@ -11,6 +11,18 @@ export function excuteResponse(res: string) {
     if (replyObject.type == "replyScene") {
       useScenesStore().load(replyObject.data);
     }
+    if (replyObject.type == "rollResult") {
+      const speaker={} as any
+      speaker.name=replyObject.data.roller
+      useMessagesStore().push(
+        replyObject.data.roller +
+          "rolled" +
+          replyObject.data.text +
+          "=" +
+          replyObject.data.value,
+          speaker
+      );
+    }
   } catch {}
 
   if (/^create/.test(command)) {
@@ -56,14 +68,14 @@ export function excuteResponse(res: string) {
       sceneStroe.update(updater);
     }
   }
-  console.log("testspeak",command)
+  console.log("testspeak", command);
   if (/^speak/.test(command)) {
-    console.log(command)
+    console.log(command);
     const messageStroe = useMessagesStore();
     const textContent = command.split(" ");
     if (textContent[1]) {
       const message = JSON.parse(textContent[1]);
-      messageStroe.push(message.messageString,message.speaker)
+      messageStroe.push(message.messageString, message.speaker);
     }
   }
   if (/^export/.test(command)) {
