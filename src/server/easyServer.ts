@@ -69,6 +69,7 @@ export class EasyServer {
   }
 
   broadcast(msg: string): void {
+    console.log("this.subscribers",this.subscribers)
     for (let client of this.subscribers) {
       const id = client.id as string;
       this.reply(msg, id);

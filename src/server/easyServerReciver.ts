@@ -14,7 +14,7 @@ export class EasyServerReciver {
       fn();
     }
   }
-  constructor(id?:string) {
+  constructor(id?: string) {
     this.serverIns = new EasyServer();
     this.serverIns.reply = (msg: string, id: string) => {
       this.send(msg, id);
@@ -28,19 +28,25 @@ export class EasyServerReciver {
       }
     });
     this.peerMan.onRecive((msg, conn) => {
-      const id = conn.connectionId;
+      const id = conn.peer;
       this.serverIns.recive(msg, id);
     });
     this.peerMan.onConnect((conn) => {
-      const id = conn.connectionId;
-      const client = new EasyClient();
-      client.id = id;
-      this.serverIns.subscribers.push(client);
+      const id = conn.peer;
+      let existFlag = false;
+      for (let subscriber of this.serverIns.subscribers) {
+        if (subscriber.id == id) existFlag = true;
+      }
+      if (!existFlag) {
+        const client = new EasyClient();
+        client.id = id;
+        this.serverIns.subscribers.push(client);
+      }
     });
   }
   //用于回复请求的函数
   send(msg: string, id: string) {
     //这里本来应该调用send，但是先用广播
-    this.peerMan.broadcast(msg);
+    this.peerMan.sentTo(id, msg);
   }
 }

@@ -51,7 +51,7 @@ const clientReciver = clientReciverStore.getIns();
 const serverReciver = serverReciverStore.getIns();
 const peerId = computed(() => serverReciverStore.id);
 function createRoomClick() {
-    serverReciverStore.createRoomServer("server20231225")
+    serverReciverStore.createRoomServer("server"+Date.now())
 }
 
 function read(file: any) {
@@ -84,7 +84,7 @@ function sentMessage() {
     //这里暂时先直接操纵客户端接收层
     if (/^conn/.test(command)) {
         const textContent = command.split(" ");
-
+        clientReciver.clear()
         clientReciver.connect(textContent[1])
     }
     if (/^send/.test(command)) {
@@ -114,6 +114,7 @@ function sentSpeak() {
         // console.log(diceF.diceResultArr)
         return;
     }
+    console.log("command speak")
     let command = "speak "
     const speaker = { name: userName.value }
     const message = { speaker: speaker, messageString: speak }

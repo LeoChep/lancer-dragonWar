@@ -31,6 +31,8 @@ export class EasyClientReciver {
   }
   sendToServer(msg: any) {
     //实际上应该用send方法，但是这里先用广播
+    // console.log("sendto ",this.peerMan)
+    console.log("sendToServer in clinet")
     this.peerMan.broadcast(msg);
   }
   connect(id: string) {
@@ -42,5 +44,12 @@ export class EasyClientReciver {
     const server = new EasyServer();
     server.id = id;
     this.clientIns.setServer(server);
+  }
+  clear(){
+    for (let conn of this.peerMan.conns)
+      {
+        conn[1].close()
+      }
+    this.peerMan.conns.clear()
   }
 }

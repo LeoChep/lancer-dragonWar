@@ -30,6 +30,7 @@ export const useServerReciverStore = defineStore("serverReciver", () => {
       
       clientReciver.onInit(() => {
         console.log("clientReciver onInit increateRoomServer");
+        clientReciver.clear()
         clientReciver.connect(serverReciver.serverIns.id as string);
         //这个操作本该有专门的store负责，目前还没有
         LStorage.set("serverRoom", { name: name });

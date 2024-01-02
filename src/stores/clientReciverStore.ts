@@ -1,11 +1,11 @@
-import { ref, computed } from "vue";
+import { ref, computed, type Ref } from "vue";
 import { defineStore } from "pinia";
 import { EasyServerReciver } from "@/server/easyServerReciver";
 import { LStorage } from "@/tools/storageMan";
 import { EasyClientReciver } from "@/client/easyClientReciver";
 
 export const useClientReciverStore = defineStore("clientReciver", () => {
-  const ins = ref();
+  const ins = ref() as Ref<EasyClientReciver>
   const index = ref(0);
   const loding = ref(false);
   const init = () => {

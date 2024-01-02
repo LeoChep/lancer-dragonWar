@@ -1,0 +1,9 @@
+{
+    "name":"warBoss",
+    "token":"warBoss.jpg",
+    "size":{
+        "sizeX":100,
+        "sizeY":100
+    }
+
+}
