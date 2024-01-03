@@ -7,15 +7,15 @@ export class PeerMan {
   constructor(id?: string) {
     if (id) {
       this.peer = new Peer(id,{
-        host: 'localhost',
+        host: '1.92.100.87',
         port: 9000,
-        path: '/myapp'
+        path: '/'
       });
     } else {
       this.peer = new Peer({
-        host: 'localhost',
+        host: '1.92.100.87',
         port: 9000,
-        path: '/myapp'
+        path: '/'
       });
     }
 

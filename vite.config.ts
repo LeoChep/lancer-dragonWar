@@ -14,6 +14,10 @@ export default defineConfig({
       input: '/extracServer.js'
     }
   },
+  server: {
+    //使用IP能访问
+      host: '0.0.0.0'
+    },
   plugins: [
     vue(),
     vueJsx(),
