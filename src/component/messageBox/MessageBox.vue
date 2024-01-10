@@ -1,16 +1,16 @@
 <template>
     <div @onDrop="">
+        <div>
+            <el-card class="box-card " shadow="hover" v-for="item in messageList" :key="item.id">
+                <template #header>
+                    <div class="card-header">
+                        <span>{{ item.speaker.name }}</span>
 
-        <el-card class="box-card " shadow="hover" v-for="item in messageList" :key="item.id">
-            <template #header>
-                <div class="card-header">
-                    <span>{{ item.speaker.name }}</span>
-
-                </div>
-            </template>
-            <div class="text item">{{ item.content }}</div>
-        </el-card>
-
+                    </div>
+                </template>
+                <div class="text item">{{ item.content }}</div>
+            </el-card>
+        </div>
     </div>
 </template>
 <script setup lang="ts">
@@ -27,7 +27,7 @@ messageStore.$onAction(({ after }) => {
             const messageBox = document.getElementById("message-box")
             if (messageBox)
                 messageBox.scrollTop = messageBox?.scrollHeight;
-        },20)
+        }, 20)
 
     })
 
@@ -49,8 +49,7 @@ messageStore.$onAction(({ after }) => {
 }
 
 .box-card {
-
-    background-color: aliceblue;
+    /* background-image: url("ui/background.webp"); */
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
     border-radius: 2px;
     border-top: 1px solid rgba(255, 255, 255, 0.5);

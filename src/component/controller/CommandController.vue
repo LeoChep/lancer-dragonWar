@@ -1,23 +1,40 @@
 <template>
-    {{ peerId }}
-    <button @click="toeknBoxButonClick">token盒子</button>
-    <div v-if="tokenBoxOpen == true">
-        <TokenAssetBoxVue></TokenAssetBoxVue>
-    </div>
+    <div id="commander">
+        <div>
+            {{ peerId }} <button @click="createRoomClick()">创建房间</button>
+        </div>
+        <div>
+            <button @click="toeknBoxButonClick">token盒子</button>
+            <button @click="openSaverClick">存档导入
+            </button>
+            <button @click="openGMboxClick">GM指令
+            </button>
+            <button @click="openChatChannelClick">聊天</button>
+        </div>
 
-    <button @click="createRoomClick()">创建房间</button>
-    选择存档导入<input id="db-file" type="file" @change="load" />
-    <form @submit="sentMessage()" v-on:submit.prevent>
-        <input type='textarea' v-model="inputText" />
-    </form>
+        <div v-if="tokenBoxOpen == true">
+            <TokenAssetBoxVue></TokenAssetBoxVue>
+        </div>
 
-    <button @click="sentMessage()" draggable="true" >发送</button>
-    <div>
-        昵称<input type='textarea' v-model="userName" @change="changeUserName" />
-        <form @submit="sentSpeak()" v-on:submit.prevent>
-            <input type='textarea' v-model="speakText" />
-        </form>
-        <button @click="sentSpeak()">发送</button>
+        <div v-if="saverBoxOpen == true">
+            选择存档导入<input id="db-file" type="file" @change="load" />
+        </div>
+
+        <div v-if="gmBoxOpen == true">
+            <form @submit="sentMessage()" v-on:submit.prevent>
+                <input type='textarea' v-model="inputText" />
+            </form>
+            <button @click="sentMessage()" draggable="true">发送</button>
+        </div>
+
+
+        <div v-if="chatChannelOpen == true">
+            昵称<input type='textarea' v-model="userName" @change="changeUserName" />
+            <form @submit="sentSpeak()" v-on:submit.prevent>
+                <input type='textarea' v-model="speakText" />
+            </form>
+            <button @click="sentSpeak()">发送</button>
+        </div>
     </div>
 </template>
 <script setup lang="ts">
@@ -30,7 +47,7 @@ import { LStorage } from "@/tools/storageMan";
 import { useClientReciverStore } from "@/stores/clientReciverStore";
 import { useServerReciverStore } from "@/stores/serverReciverStore";
 import { parseDiceFormula } from "@/tools/DiceFormulaTrans";
-import  TokenAssetBoxVue from "./TokenAssetBox.vue";
+import TokenAssetBoxVue from "./TokenAssetBox.vue";
 const tokenBoxOpen = ref(false)
 const toeknBoxButonClick = () => {
     if (!tokenBoxOpen.value)
@@ -39,6 +56,31 @@ const toeknBoxButonClick = () => {
         tokenBoxOpen.value = false
 
 }
+const saverBoxOpen = ref(false)
+const openSaverClick = () => {
+    if (!saverBoxOpen.value)
+        saverBoxOpen.value = true;
+    else
+        saverBoxOpen.value = false
+
+}
+const gmBoxOpen = ref(false)
+const openGMboxClick = () => {
+    if (!gmBoxOpen.value)
+        gmBoxOpen.value = true;
+    else
+        gmBoxOpen.value = false
+
+}
+const chatChannelOpen = ref(false)
+const openChatChannelClick = () => {
+    if (!chatChannelOpen.value)
+    chatChannelOpen.value = true;
+    else
+    chatChannelOpen.value = false
+
+}
+chatChannelOpen
 const messageStroe = useMessagesStore();
 const inputText = ref("")
 const speakText = ref("")
@@ -51,7 +93,7 @@ const clientReciver = clientReciverStore.getIns();
 const serverReciver = serverReciverStore.getIns();
 const peerId = computed(() => serverReciverStore.id);
 function createRoomClick() {
-    serverReciverStore.createRoomServer("server"+Date.now())
+    serverReciverStore.createRoomServer("server" + Date.now())
 }
 
 function read(file: any) {
@@ -130,3 +172,9 @@ function sentSpeak() {
 }
 
 </script>
+<style>
+#commander {
+    color: wheat;
+    display: grid;
+}
+</style>

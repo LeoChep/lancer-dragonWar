@@ -1,0 +1,9 @@
+{
+    "name":"skull_demon",
+    "token":"skull_demon.png",
+    "size":{
+        "sizeX":100,
+        "sizeY":100
+    }
+
+}

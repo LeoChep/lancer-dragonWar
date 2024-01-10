@@ -1,9 +1,18 @@
 <template>
     <div>
         <div class="tokenBox">
+
             <div v-for="token of tokenInfoArr" class="token" @dragstart="dragToken($event, token)">
-                {{ token.name }}
-                <img :src="token.tokenUrl" width="50px" height="50px" />
+                <div style="text-align: center;">
+                    <img :src="token.tokenUrl" width="50px" height="50px" />
+                </div>
+                <div
+                    style="text-align: center; width:80px;    text-transform: uppercase;height:50px;word-break: break-all;">
+                    <p>{{ token.name }}</p>
+
+                </div>
+
+
             </div>
         </div>
     </div>
@@ -47,8 +56,8 @@ const dragToken = (event: DragEvent, token: any) => {
     const callbackId = callBackStore.addCallBackHook(
         (pos) => {
 
-            const x =  parseInt(pos.x) - parseInt(token.size.sizeX) / 2
-            const y =  parseInt(pos.y) - parseInt(token.size.sizeY) / 2
+            const x = parseInt(pos.x) - parseInt(token.size.sizeX) / 2
+            const y = parseInt(pos.y) - parseInt(token.size.sizeY) / 2
             DebugMan.debugFor = "callback";
             DebugConsole("callback", "create ", token, "at", pos);
             clientReciver.sendToServer("create " + token.name + " " + token.name + Date.now() + " " + x + " " + y)
@@ -64,7 +73,7 @@ const dragToken = (event: DragEvent, token: any) => {
 }
 
 .token {
-    width: 50px;
+    width: 80px;
     ;
 }
 </style>
