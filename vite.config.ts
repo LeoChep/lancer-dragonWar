@@ -1,5 +1,5 @@
 import { fileURLToPath, URL } from 'node:url'
-import {func} from './extracServer.ts'
+import {func} from './extracServer'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
