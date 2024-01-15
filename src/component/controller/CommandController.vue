@@ -90,7 +90,7 @@ const speakText = ref("")
 const clientReciverStore = useClientReciverStore();
 const serverReciverStore = useServerReciverStore();
 const clientReciver = clientReciverStore.getIns();
-const serverReciver = serverReciverStore.getIns();
+// const serverReciver = serverReciverStore.getIns();
 const peerId = computed(() => serverReciverStore.id);
 function createRoomClick() {
     serverReciverStore.createRoomServer("server" + Date.now())

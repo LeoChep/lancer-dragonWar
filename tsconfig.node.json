@@ -6,7 +6,8 @@
     "cypress.config.*",
     "nightwatch.conf.*",
     "playwright.config.*",
-    "extracServer.ts"
+    "extracServer.ts",
+    "/src/*.*"
   ],
   "compilerOptions": {
     "composite": true,

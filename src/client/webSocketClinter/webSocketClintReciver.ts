@@ -1,10 +1,10 @@
-import { PeerMan } from "../../src//tools/peerMan";
-import { EasyClient } from "./easyClient";
-import { EasyServer } from "../../src//server/easyServer";
-import { LStorage } from "../../src/tools/storageMan";
-
-export class EasyClientReciver {
-  private peerMan: PeerMan;
+import { SocketMan } from './../../tools/socketMan';
+// import { PeerMan } from "@/tools/peerMan";
+import { EasyClient } from "../easyClient";
+import { EasyServer } from "@/server/easyServer";
+import { LStorage } from "@/tools/storageMan";
+export class WebSocketClientReciver {
+  private peerMan: SocketMan;
   clientIns: EasyClient;
   private isInited = false;
   //用于外部注入的钩子
@@ -18,7 +18,7 @@ export class EasyClientReciver {
   
   constructor() {
     this.clientIns = new EasyClient();
-    this.peerMan = new PeerMan();
+    this.peerMan = new SocketMan("client"+Date.now());
     this.peerMan.onOpen((id) => {
       this.clientIns.id = id;
       this.isInited = true;

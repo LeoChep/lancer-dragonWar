@@ -1,6 +1,7 @@
-import { parseDiceFormula } from "@/tools/DiceFormulaTrans";
+
+import { parseDiceFormula } from "../../src/tools/DiceFormulaTrans";
 import { useScenesStore } from "./../stores/sceneStore";
-import type { EasyClient } from "@/client/easyClient";
+import { EasyClient } from "../../src/client/easyClient";
 
 export function sendToClients(res: string) {}
 export class EasyServer {
@@ -11,6 +12,18 @@ export class EasyServer {
   reply = (msg: string, id: string) => {};
   constructor() {
     this.subscribers = [];
+  }
+  addClint(id:string):void{
+    let existFlag = false;
+    for (let subscriber of this.subscribers) {
+      if (subscriber.id == id) existFlag = true;
+    }
+    if (!existFlag) {
+      const client = new EasyClient();
+      client.id = id;
+      this.subscribers.push(client);
+    }
+
   }
   recive(msg: string, id: string): void {
     //应用有一层外置的reciver封装，用于接收信息，再传给这层
@@ -25,10 +38,13 @@ export class EasyServer {
     //这里没有事件系统，直接进行判断，后续需要修改
     console.log("recive", msg);
     if (msg == "requestScene") {
-      console.log("some one requestScene");
-      const sceneStore = useScenesStore();
-      const state = sceneStore.getState();
-      const data = JSON.stringify(state);
+      console.log("some one requestScene",id);
+      // const sceneStore = useScenesStore();
+      // console.log("sceneStore");
+      // const state = sceneStore.getState();
+      // const data = JSON.stringify(state);
+      const data = JSON.stringify("");
+      // console.log(data)
       this.reply(JSON.stringify({ type: "replyScene", data: data }), id);
       return;
     }

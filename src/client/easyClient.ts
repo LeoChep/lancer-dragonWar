@@ -1,8 +1,8 @@
 import { useScenesStore } from "./../stores/sceneStore";
 import { EasyServer } from "./../server/easyServer";
 import { Updater } from "../component/controller/updater";
-import { useDirector } from "@/stores/perform/director";
-import { useMessagesStore } from "@/stores/messagesStore";
+import { useDirector } from "../../src//stores/perform/director";
+import { useMessagesStore } from "../../src//stores/messagesStore";
 //不应该在这里，应该拆分更多层分别交给对应的逻辑链路计算，并有对应的逻辑链路调用对应的store
 export function excuteResponse(res: string) {
   const command = res;

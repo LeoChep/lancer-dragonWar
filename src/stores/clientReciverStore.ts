@@ -1,24 +1,35 @@
+import { SocketMan } from './../tools/socketMan';
 import { ref, computed, type Ref } from "vue";
 import { defineStore } from "pinia";
 import { EasyServerReciver } from "@/server/easyServerReciver";
 import { LStorage } from "@/tools/storageMan";
 import { EasyClientReciver } from "@/client/easyClientReciver";
-
+import { WebSocketClientReciver } from "@/client/webSocketClinter/webSocketClintReciver";
 export const useClientReciverStore = defineStore("clientReciver", () => {
   const ins = ref() as Ref<EasyClientReciver>
   const index = ref(0);
   const loding = ref(false);
+  const mode="webSocket"
+  //or peer
   const init = () => {
-    const clientReciver = new EasyClientReciver();
+    // const clientReciver = new EasyClientReciver();
+    SocketMan.config.url="ws://localhost:12010//"
+    const clientReciver = new WebSocketClientReciver();
     function checkHasConnectRoom() {
-      const server = LStorage.get("serverRoom");
-      if (server)
-        return;
+      // const server = LStorage.get("serverRoom");
+      // if (server)
+      //   return;
       //这个操作本该有专门的store负责，目前还没有
       const connectServer = LStorage.get("connectRoom");
       
       const connectServerID = connectServer?.name;
+      if (mode=='webSocket'){
+        clientReciver.onInit(()=>{
+          clientReciver.sendToServer("requestScene");
+        })
+      }
       if (connectServerID != undefined && connectServerID != null) {
+        
         clientReciver.peerMan.onConnect(() => {
           console.log("requestScene");
           clientReciver.sendToServer("requestScene");
