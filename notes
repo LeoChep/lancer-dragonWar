@@ -1,14 +1,9 @@
-目前已经接入了p2p，但是p2p功能不完善
-p2p功能还需补充的有：
-1、增加断线重连功能（需要增加存储模块，用于存储房间号与个人信息） 已添加
-2、增加对单信息发送功能（目前都是用广播）已添加
-3、增加断线移除conn
-4、在连接和接受信息时发送给消息窗（接入消息模块）
-5、接入系统模块
+notes
+需要抽象出peerMan和socketMan的共同父类，communicateBridgeWorker
+communicataBridge->peerBridgeWorker
+                 ->socketBridgeWorker
 
-系统模块的当务之急：使用服务器模块临时处理
-接受连接时要求请求当前场景内容的请求
-系统模块需要处理该请求
-返回server所在客户端的scene状态
+要增加server和client的bean或者说类型文件，用于复用
 
-骰子模块
+要逐步弃用pinia作为数据管理，pinia应该只作为页面框架显示的状态管理，而不应该是核心数据管理
+

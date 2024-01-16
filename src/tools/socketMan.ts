@@ -30,11 +30,7 @@ export class SocketMan {
         this.handleOpen(id as string);
       };
       //发送回来的信息需要简单解包
-      webSocket.onmessage = (ev: MessageEvent) => {
-        const data = ev.data.toString();
-        console.log("socketMAN", data);
-        this.recive(data, webSocket);
-      };
+     this.openListen(webSocket)
     }
   }
 
@@ -67,6 +63,13 @@ export class SocketMan {
       console.log("stringify", JSON.stringify(reqData));
       conn?.send(JSON.stringify(reqData));
     });
+  }
+  openListen(conn: WebSocket){
+    conn.onmessage = (ev: MessageEvent) => {
+      const data = ev.data.toString();
+      console.log("socketMAN", data);
+      this.recive(data, conn);
+    };
   }
   recive(msg: any, conn: WebSocket) {
     for (let fn of this.onReciveFns) {
