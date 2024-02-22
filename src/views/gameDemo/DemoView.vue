@@ -1,11 +1,27 @@
 <script setup lang="ts">
-    const director={}
+import { ref } from 'vue';
+    const director=new DemoDirector();
+    const displayState=ref({content:"",promise:new Promise(()=>{}),resolve:(value?:any)=>{}})
+    const display=(content:string)=>{
+      displayState.value.content=content;
+      let resolveLock=(value?:any)=>{};
+      displayState.value.promise=new Promise((resolve)=>{
+        resolveLock=resolve;
+      })
+      displayState.value.resolve=resolveLock;
+      return  displayState.value.promise;
+    }
+    const skip=()=>{
+      displayState.value.resolve();
+    }
+    const displayController={skip:skip,display:display};
+    director.displayController=displayController;
 </script>
 
 <template>
   <div class="wrapper">
     <div id="game-box">
-   
+      {{ displayState.content }}
     </div>
     <div id="message-box">
     

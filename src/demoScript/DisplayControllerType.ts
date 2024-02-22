@@ -1,0 +1,1 @@
+type  DisplayController={skip:()=>void,display:(value?:any)=>{}};
