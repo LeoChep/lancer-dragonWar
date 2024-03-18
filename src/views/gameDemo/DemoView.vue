@@ -13,19 +13,25 @@ const display = (content: string) => {
   displayState.value.resolve = resolveLock;
   return displayState.value.promise;
 }
-const question = (content: string,button:ButtonItem[]) => {
-  displayState.value.content = content;
-  let resolveLock = (value?: any) => { };
-  displayState.value.promise = new Promise((resolve) => {
+const buttons=ref([])
+const selectState=ref({})
+const question = (content?: string,button?:ButtonItem[]) => {
+  buttons.value=button;
+  selectState.value.content = content;
+  let resolveLock = (value?: any) => {return value};
+  selectState.value.promise = new Promise((resolve) => {
     resolveLock = resolve;
   })
-  displayState.value.resolve = resolveLock;
-  return displayState.value.promise;
+  selectState.value.resolve = resolveLock;
+  return selectState.value.promise;
+}
+const selectHandle=(id:string)=>{
+  selectState.value.resolve(id);
 }
 const skip = () => {
   displayState.value.resolve();
 }
-const displayController = { skip: skip, display: display };
+const displayController = { skip: skip, display: display ,question:question};
 director.displayController = displayController;
 const talk_window = ref(null as unknown as HTMLElement)
 window.addEventListener('keydown', skip);
@@ -44,7 +50,7 @@ onMounted(() => {
 
     </div>
     <div id="controller-box">
-
+      <button class="select-button" v-for="button of buttons" @click="selectHandle(button.id)">{{ button.chars }}</button>
     </div>
   </div>
 </template>
@@ -107,5 +113,9 @@ onMounted(() => {
   background-image: url("ui/header-background-vertical.webp");
   text-align: left;
   z-index: 2;
+}
+.select-item{
+  height: 20px;
+  width: 20px;
 }
 </style>

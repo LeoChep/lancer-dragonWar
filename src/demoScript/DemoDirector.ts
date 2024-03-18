@@ -12,7 +12,11 @@ class DemoDirector implements DemoDirectorInterFace {
     await this.displayController?.display("你将进行一场战斗测试");
     await this.displayController?.display("Are u ready?");
     let question1=await this.displayController?.question("准备好了吗",[{'id':"yes","chars":"yes"},{'id':"no","chars":"no"}]);
-
+    this.displayController?.question(null,[]);
+    if (question1=='yes')
+      {
+        await this.displayController?.display("just do it !");
+      }
   }
 }
 export { DemoDirector };
