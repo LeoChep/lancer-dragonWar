@@ -1,21 +1,38 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-    const director=new DemoDirector();
-    const displayState=ref({content:"",promise:new Promise(()=>{}),resolve:(value?:any)=>{}})
-    const display=(content:string)=>{
-      displayState.value.content=content;
-      let resolveLock=(value?:any)=>{};
-      displayState.value.promise=new Promise((resolve)=>{
-        resolveLock=resolve;
-      })
-      displayState.value.resolve=resolveLock;
-      return  displayState.value.promise;
-    }
-    const skip=()=>{
-      displayState.value.resolve();
-    }
-    const displayController={skip:skip,display:display};
-    director.displayController=displayController;
+import { DemoDirector } from "@/demoScript/DemoDirector"
+import { onMounted, ref } from 'vue';
+import type { ButtonItem } from "@/demoScript/DisplayControllerType";
+const director = new DemoDirector();
+const displayState = ref({ content: "", promise: new Promise(() => { }), resolve: (value?: any) => { } })
+const display = (content: string) => {
+  displayState.value.content = content;
+  let resolveLock = (value?: any) => { };
+  displayState.value.promise = new Promise((resolve) => {
+    resolveLock = resolve;
+  })
+  displayState.value.resolve = resolveLock;
+  return displayState.value.promise;
+}
+const question = (content: string,button:ButtonItem[]) => {
+  displayState.value.content = content;
+  let resolveLock = (value?: any) => { };
+  displayState.value.promise = new Promise((resolve) => {
+    resolveLock = resolve;
+  })
+  displayState.value.resolve = resolveLock;
+  return displayState.value.promise;
+}
+const skip = () => {
+  displayState.value.resolve();
+}
+const displayController = { skip: skip, display: display };
+director.displayController = displayController;
+const talk_window = ref(null as unknown as HTMLElement)
+window.addEventListener('keydown', skip);
+onMounted(() => {
+  director.start()
+
+})
 </script>
 
 <template>
@@ -24,10 +41,10 @@ import { ref } from 'vue';
       {{ displayState.content }}
     </div>
     <div id="message-box">
-    
+
     </div>
     <div id="controller-box">
-   
+
     </div>
   </div>
 </template>
