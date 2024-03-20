@@ -13,25 +13,25 @@ const display = (content: string) => {
   displayState.value.resolve = resolveLock;
   return displayState.value.promise;
 }
-const buttons=ref([])
-const selectState=ref({})
-const question = (content?: string,button?:ButtonItem[]) => {
-  buttons.value=button;
+const buttons = ref([])
+const selectState = ref({})
+const question = (content?: string, button?: ButtonItem[]) => {
+  buttons.value = button;
   selectState.value.content = content;
-  let resolveLock = (value?: any) => {return value};
+  let resolveLock = (value?: any) => { return value };
   selectState.value.promise = new Promise((resolve) => {
     resolveLock = resolve;
   })
   selectState.value.resolve = resolveLock;
   return selectState.value.promise;
 }
-const selectHandle=(id:string)=>{
+const selectHandle = (id: string) => {
   selectState.value.resolve(id);
 }
 const skip = () => {
   displayState.value.resolve();
 }
-const displayController = { skip: skip, display: display ,question:question};
+const displayController = { skip: skip, display: display, question: question };
 director.displayController = displayController;
 const talk_window = ref(null as unknown as HTMLElement)
 window.addEventListener('keydown', skip);
@@ -44,13 +44,16 @@ onMounted(() => {
 <template>
   <div class="wrapper">
     <div id="game-box">
-      {{ displayState.content }}
+      <textarea class="content-box" disabled>
+        {{ displayState.content }}
+      </textarea>
     </div>
     <div id="message-box">
 
     </div>
     <div id="controller-box">
-      <button class="select-button" v-for="button of buttons" @click="selectHandle(button.id)">{{ button.chars }}</button>
+      <button class="select-button" v-for="button of buttons" @click="selectHandle(button.id)">{{ button.chars
+        }}</button>
     </div>
   </div>
 </template>
@@ -114,8 +117,17 @@ onMounted(() => {
   text-align: left;
   z-index: 2;
 }
-.select-item{
+
+.select-item {
   height: 20px;
   width: 20px;
+}
+
+.content-box {
+  width: 100%;
+  height: 209px;
+  border: none;
+  text-align: center;
+  resize: none;
 }
 </style>
