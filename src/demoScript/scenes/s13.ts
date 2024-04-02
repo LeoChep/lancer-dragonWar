@@ -1,4 +1,6 @@
 import type { DisplayController } from "../DisplayControllerType";
+import { findPath, wolf } from "../enemys/Wolf";
+import { fighter } from "../players/Fighter";
 
 export async function jumpIn_13(director: DisplayController) {
   await director.display(
@@ -10,4 +12,21 @@ export async function jumpIn_13(director: DisplayController) {
   await director.display(
     "你现在正在和一匹狼战斗！你知道这野兽无法被驯服，必须杀死才能保证农民家畜的安全。你和狼轮流进行攻击彼此。你攻击掷20面骰（简称为d20），并加上你的攻击加值（attack bonus）（代表你持用武器的技能）。如果总数大于等于狼的盔甲等级（Armor Class）（简称为AC），则攻击命中并造成伤害。从狼的生命值（Hit Points）（简称为HP）。要击倒狼，你必须将狼的HP减至0以下。在狼的回合，它会攻击你——你为狼掷骰d20，加上它的攻击加值，将结果与你的AC比较。如果狼将你的HP减至0以下，你就会死亡。将你的HP和狼的HP都记录在一张草稿纸上。"
   );
+  wolf;
+  wolf.x=20;
+  wolf.y=20;
+  fighter;
+  const mapTr=[
+    [0,0,0,0,0,0],
+    [0,1,1,1,1,0],
+    [0,1,1,1,1,0],
+    [0,1,1,1,1,0],
+    [0,1,1,1,1,0],
+    [0,0,0,0,0,0],
+  ] as any[][]
+  for (let i in mapTr)
+    for (let j in mapTr[i]){
+      mapTr[i][j]=Boolean(mapTr[i][j])
+    }
+  console.log(findPath(wolf,{x:5,y:5},mapTr))
 }

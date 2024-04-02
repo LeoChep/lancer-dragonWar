@@ -7,6 +7,7 @@ const wolf = {
   touch: 5,
   enemys: [] as any[],
   map: {} as any,
+
   actionPoint: 3,
   ai: ai,
 };
@@ -44,14 +45,23 @@ async function ai(this: {
   }
 }
 function findPath(finder: any, target: any, mapTr: boolean[][]) {
+  console.log(mapTr);
   const mapCost = [] as number[][][];
   const mapPath = [] as any[][][][];
+  for (let x = 0; x < 99; x++) {
+    mapCost[x] = [] as number[][];
+    mapPath[x] = [] as any[][];
+    for (let y = 0; y < 99; y++) {
+      mapCost[x][y] = [] as number[];
+      mapPath[x][y] = [] as any[];
+    }
+  }
   for (let x = 0; x < mapTr.length; x++) {
     for (let y = 0; y < mapTr[x].length; y++) {
       mapCost[x][y][0] = 999999;
       mapCost[x][y][1] = 999999;
-      mapPath[x][y][0]  =[]
-      mapPath[x][y][1]  =[]
+      mapPath[x][y][0] = [];
+      mapPath[x][y][1] = [];
     }
   }
   let finderX = Math.floor(finder.x / 5);
@@ -59,8 +69,11 @@ function findPath(finder: any, target: any, mapTr: boolean[][]) {
   let targetX = Math.floor(target.x / 5);
   let targety = Math.floor(target.y / 5);
   mapCost[finderX][finderY][0] = 0;
-  
+
+  console.log(mapCost);
+
   const temp = [{ x: finderX, y: finderY, haveAxis: 0 }];
+
   while (
     mapCost[targetX][targety][0] >= 999999 &&
     mapCost[targetX][targety][1] >= 999999 &&
@@ -70,13 +83,16 @@ function findPath(finder: any, target: any, mapTr: boolean[][]) {
     let starterX = starter.x;
     let starterY = starter.y;
     let haveAxis = starter.haveAxis;
-    mapPath[starterX][starterY][haveAxis].push({x:starterX,y:starterY})
+    mapPath[starterX][starterY][haveAxis].push({ x: starterX, y: starterY });
+    const temppath=JSON.stringify( mapPath[starterX][starterY][haveAxis])
+    console.log(mapPath[starterX][starterY][haveAxis]);
     let cost = mapCost[starterX][starterY][haveAxis];
     if (
       mapTr[starterX - 1][starterY] &&
       cost + 5 < mapCost[starterX - 1][starterY][haveAxis]
     ) {
       mapCost[starterX - 1][starterY][haveAxis] = cost + 5;
+      mapPath[starterX - 1][starterY][haveAxis]=JSON.parse(temppath)
       temp.push({ x: starterX - 1, y: starterY, haveAxis: haveAxis });
     }
     if (
@@ -84,6 +100,7 @@ function findPath(finder: any, target: any, mapTr: boolean[][]) {
       cost + 5 < mapCost[starterX + 1][starterY][haveAxis]
     ) {
       mapCost[starterX + 1][starterY][haveAxis] = cost + 5;
+      mapPath[starterX + 1][starterY][haveAxis]=JSON.parse(temppath)
       temp.push({ x: starterX + 1, y: starterY, haveAxis: haveAxis });
     }
     if (
@@ -91,6 +108,7 @@ function findPath(finder: any, target: any, mapTr: boolean[][]) {
       cost + 5 < mapCost[starterX][starterY - 1][haveAxis]
     ) {
       mapCost[starterX][starterY - 1][haveAxis] = cost + 5;
+      mapPath[starterX][starterY - 1][haveAxis]=JSON.parse(temppath)
       temp.push({ x: starterX, y: starterY - 1, haveAxis: haveAxis });
     }
     if (
@@ -98,6 +116,7 @@ function findPath(finder: any, target: any, mapTr: boolean[][]) {
       cost + 5 < mapCost[starterX][starterY + 1][haveAxis]
     ) {
       mapCost[starterX][starterY + 1][haveAxis] = cost + 5;
+      mapPath[starterX][starterY + 1][haveAxis]=JSON.parse(temppath)
       temp.push({ x: starterX, y: starterY + 1, haveAxis: haveAxis });
     }
     //计算斜走
@@ -113,6 +132,7 @@ function findPath(finder: any, target: any, mapTr: boolean[][]) {
       cost + axisCost < mapCost[starterX + 1][starterY + 1][haveAxis]
     ) {
       mapCost[starterX + 1][starterY + 1][haveAxis] = cost + axisCost;
+      mapPath[starterX + 1][starterY + 1][haveAxis]=JSON.parse(temppath)
       temp.push({ x: starterX + 1, y: starterY + 1, haveAxis: haveAxis });
     }
     if (
@@ -120,6 +140,7 @@ function findPath(finder: any, target: any, mapTr: boolean[][]) {
       cost + axisCost < mapCost[starterX + 1][starterY - 1][haveAxis]
     ) {
       mapCost[starterX + 1][starterY - 1][haveAxis] = cost + axisCost;
+      mapPath[starterX + 1][starterY - 1][haveAxis]=JSON.parse(temppath)
       temp.push({ x: starterX + 1, y: starterY - 1, haveAxis: haveAxis });
     }
     if (
@@ -127,6 +148,7 @@ function findPath(finder: any, target: any, mapTr: boolean[][]) {
       cost + axisCost < mapCost[starterX - 1][starterY - 1][haveAxis]
     ) {
       mapCost[starterX - 1][starterY - 1][haveAxis] = cost + axisCost;
+      mapPath[starterX - 1][starterY - 1][haveAxis]=JSON.parse(temppath)
       temp.push({ x: starterX - 1, y: starterY - 1, haveAxis: haveAxis });
     }
     if (
@@ -134,16 +156,19 @@ function findPath(finder: any, target: any, mapTr: boolean[][]) {
       cost + axisCost < mapCost[starterX - 1][starterY + 1][haveAxis]
     ) {
       mapCost[starterX - 1][starterY + 1][haveAxis] = cost + axisCost;
+      mapPath[starterX - 1][starterY + 1][haveAxis]=JSON.parse(temppath)
       temp.push({ x: starterX - 1, y: starterY + 1, haveAxis: haveAxis });
     }
     temp.shift();
   }
   let costResult = mapCost[targetX][targety][0];
   let pathResult = mapPath[targetX][targety][0];
-  if (mapCost[targetX][targety][0] > mapCost[targetX][targety][1]){
+  console.log(mapPath);
+  if (mapCost[targetX][targety][0] > mapCost[targetX][targety][1]) {
     costResult = mapCost[targetX][targety][1];
-    pathResult =mapPath[targetX][targety][1];
+    pathResult = mapPath[targetX][targety][1];
   }
-    
-  return {cost:costResult,path:pathResult}
+
+  return { cost: costResult, path: pathResult };
 }
+export { wolf, findPath };
