@@ -1,7 +1,7 @@
 import type { DisplayController } from "../DisplayControllerType";
+import { BattleManager } from "../battleMoudule/BattleManager";
 import { findPath, wolf } from "../enemys/Wolf";
 import { fighter } from "../players/Fighter";
-import type { ButtonItem } from "@/demoScript/DisplayControllerType";
 export async function jumpIn_13(director: DisplayController) {
   await director.display(
     "注意到通向洞窟中的痕迹，你躲在了附近的灌木丛中，希望能够伏击到生活在此处的邪恶野兽。几分钟后，你听到了什么东西接近的声音，还有大量湿皮毛在空气中散发的气味。"
@@ -24,24 +24,8 @@ export async function jumpIn_13(director: DisplayController) {
     [0, 1, 1, 1, 1, 0],
     [0, 0, 0, 0, 0, 0],
   ] as any[][];
-  const attackButton = { id: "1", chars: "attack" };
-  const runButton = { id: "2", chars: "run" };
-  let battleLock = {} as any;
-  battleLock.hasResolved = new Promise((resolve) => {
-    battleLock.resolve = resolve;
-  });
-  const battleAction = () => {
-    director.question("", [attackButton, runButton]).then((res) => {
-      director.display(res);
-      if (res == 2) {
-        battleLock.resolve();
-      } else {
-        battleAction();
-      }
-    });
-  };
-  battleAction();
-  await battleLock.hasResolved;
+  const battle=BattleManager.startBattle(director);
+  await BattleManager.afterEnd(battle)
   await director.display("战斗结束");
   for (let i in mapTr)
     for (let j in mapTr[i]) {
