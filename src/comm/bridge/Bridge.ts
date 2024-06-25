@@ -1,11 +1,11 @@
-import { BridgeWorker } from "./BridgeWorker";
+import { type BridgeWorker } from "./BridgeWorker";
 
 export class Bridge{
     isOpen: boolean ;
     id: string ;
     worker:BridgeWorker
     init(id?: string) {
-       return this.worker.init(id);
+       return this.worker.init(id,this);
     };
     sentTo(id: string, msg: any){
         this.worker.sentTo(id,msg)

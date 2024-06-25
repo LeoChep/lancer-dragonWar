@@ -13,7 +13,7 @@ const display = (content: string) => {
   displayState.value.resolve = resolveLock;
   return displayState.value.promise;
 }
-const buttons = ref([])
+const buttons = ref([] as ButtonItem[])
 const selectState = ref({})
 const question = (content?: string, button?: ButtonItem[]) => {
   buttons.value = button;

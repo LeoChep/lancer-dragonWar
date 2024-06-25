@@ -2,8 +2,7 @@ notes
 需要抽象出peerMan和socketMan的共同父类，communicateBridgeWorker
 communicataBridge->peerBridgeWorker
                  ->socketBridgeWorker
-
+                ->offlineBridgeWorker
 要增加server和client的bean或者说类型文件，用于复用
 
 要逐步弃用pinia作为数据管理，pinia应该只作为页面框架显示的状态管理，而不应该是核心数据管理
-
