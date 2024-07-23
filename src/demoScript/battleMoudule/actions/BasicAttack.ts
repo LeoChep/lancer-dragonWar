@@ -1,0 +1,4 @@
+
+class BassicAttack implements ActionInterface{
+
+}
