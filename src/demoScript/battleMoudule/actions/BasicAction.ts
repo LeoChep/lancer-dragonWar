@@ -4,7 +4,7 @@ interface ActionInterface{
     beUsed:(useMan:Object,targets:Object[])=>ActionResultInfo
 } 
 
-abstract class BasicAction implements ActionInterface{
+class BasicAction implements ActionInterface{
     result={} as ActionResultInfo;
     beUsed=(useMan:Object,targets:Object[])=>{
         this.result={msg:'use the BasicAction'}
@@ -45,5 +45,6 @@ class ActionIns implements ActionInsInterFace{
     }
 }
 
-
-
+abstract class  abstractAction extends BasicAction {
+    abstract beUsed:(useMan:Object,targets:Object[])=>ActionResultInfo;
+}
