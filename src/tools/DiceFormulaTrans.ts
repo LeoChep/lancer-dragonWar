@@ -28,10 +28,65 @@ class Formula {
   children = [] as Formula[];
   toString = () => {
     let result = "";
+    let childrenIndex = 0;
+    let dicesIndex = 0;
     for (const formulaItem of this.children) {
       if (formulaItem.type === "formula")
         result += "(" + formulaItem.toString() + ")";
-      else result += formulaItem.toString();
+      else {
+        //第一种情况，遇到+号
+        if (
+          formulaItem.type === "opearator" &&
+          formulaItem.text !== "d" 
+        ) {
+          //如果上一个元素是公式元素，那么不显示其结果
+          
+          if (this.children[childrenIndex].type === "formula") {
+            dicesIndex++;
+            console.log('dicesIndex++formula',dicesIndex)
+          } else {
+            console.log(this);
+            let dices = this.diceResultArr[dicesIndex].diceArr.arr;
+            dicesIndex++;
+            console.log('dicesIndex++',dicesIndex)
+            let diceString = "[";
+            for (let dice of dices) {
+              diceString += dice+' ';
+            }
+            diceString += "]";
+            result += diceString;
+            console.log(result);
+          }
+        }
+        //第二种情况，遍历到最后一个兄弟
+        result += formulaItem.toString();
+        console.log(dicesIndex);
+        console.log(childrenIndex);
+        if (
+          this.children[childrenIndex].type !== "formula" &&
+          childrenIndex+1 == this.children.length - 1
+        ) {
+          console.log("enter the end");
+          console.log(this);
+          console.log(this.diceResultArr);
+          console.log(dicesIndex);
+          if (this.diceResultArr[dicesIndex] != undefined) {
+            let dices = this.diceResultArr[dicesIndex].diceArr.arr;
+            dicesIndex++;
+            let diceString = "[";
+            for (let dice of dices) {
+              diceString += dice+' ';
+
+            }
+            diceString += "]";
+            result += diceString;
+          }
+        }
+
+        childrenIndex++;
+      }
+      // if (formulaItem.type ==='diceFormula')
+      //   result+=formulaItem.diceResultArr[0]
     }
     return result;
   };
@@ -53,8 +108,8 @@ class Formula {
           this.children[1].text == "*" ||
           this.children[1].text == "/"
         )
-          this.children[0].text = '1';
-        else this.children[0].text = '0';
+          this.children[0].text = "1";
+        else this.children[0].text = "0";
       }
     }
     console.log(this.children);
@@ -68,7 +123,6 @@ class Formula {
           }
       } else stock1.push(this.children[index].text);
       if (stock1[top - 1] === "d") {
-      
         const x = stock1[top - 2] as number;
         const y = stock1[top] as number;
         const diceResult = rollxdy(x + "d" + y);

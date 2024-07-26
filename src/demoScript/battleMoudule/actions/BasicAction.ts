@@ -1,6 +1,6 @@
 interface Object{}
-interface ActionResultInfo{}
-interface ActionInterface{
+export interface ActionResultInfo{}
+export interface ActionInterface{
     beUsed:(useMan:Object,targets:Object[])=>ActionResultInfo
 } 
 
@@ -11,7 +11,7 @@ class BasicAction implements ActionInterface{
         return this.result;
     }
 }
-interface ActionInsInterFace {
+export interface ActionInsInterFace {
     action:ActionInterface
     useMan:Object;
     targets:Object[];
@@ -45,6 +45,6 @@ class ActionIns implements ActionInsInterFace{
     }
 }
 
-abstract class  abstractAction extends BasicAction {
+export abstract class  abstractAction extends BasicAction {
     abstract beUsed:(useMan:Object,targets:Object[])=>ActionResultInfo;
 }
