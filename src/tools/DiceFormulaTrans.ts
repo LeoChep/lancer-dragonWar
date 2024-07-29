@@ -10,14 +10,30 @@ function rollxdy(xdy: string) {
   console.log("rollxdy", xdy);
   const numbers = xdy.split("d");
   const range = numbers[1];
-  let result = { value: 0, diceArr: { arr: [] as number[], text: xdy } };
+  let result = { value: 0, diceArr: { arr: [] as any[], text: xdy } };
   const x = parseInt(numbers[0]);
   for (let index = 1; index <= x; index++) {
     const resultValue = roll(parseInt(range));
     result.value += resultValue;
-    result.diceArr.arr.push(resultValue);
+    result.diceArr.arr.push({type:'d'+range,value:resultValue});
   }
   return result;
+}
+const arrIntToString=(arr:any[])=>{
+  console.log(arr);
+  let result=''
+  let dices = arr
+  let diceString = "[";
+  let index=0;
+  for (let dice of dices) {
+    index++;
+    diceString += dice.value
+    if (index!=dices.length)
+      diceString +=  ',';
+  }
+  diceString += "]";
+  result += diceString;
+ return result;
 }
 class Formula {
   //公式类，组合模式，子元素为其子类骰子公式对象和操作符号对象、定值对象
@@ -27,6 +43,8 @@ class Formula {
   diceResultArr = [] as any[];
   children = [] as Formula[];
   toString = () => {
+    // console.log(this)
+    // return ""
     let result = "";
     let childrenIndex = 0;
     let dicesIndex = 0;
@@ -35,64 +53,50 @@ class Formula {
         result += "(" + formulaItem.toString() + ")";
       else {
         //第一种情况，遇到+号
-        if (
-          formulaItem.type === "opearator" &&
-          formulaItem.text !== "d" 
-        ) {
-          //如果上一个元素是公式元素，那么不显示其结果
-          
-          if (this.children[childrenIndex].type === "formula") {
-            dicesIndex++;
-            console.log('dicesIndex++formula',dicesIndex)
-          } else {
-            console.log(this);
-            let dices = this.diceResultArr[dicesIndex].diceArr.arr;
-            dicesIndex++;
-            console.log('dicesIndex++',dicesIndex)
-            let diceString = "[";
-            for (let dice of dices) {
-              diceString += dice+' ';
-            }
-            diceString += "]";
-            result += diceString;
-            console.log(result);
-          }
-        }
+        // if (
+        //   formulaItem.type === "opearator" &&
+        //   formulaItem.text !== "d" 
+        // ) {
+        //   //如果上一个元素是公式元素，那么不显示其结果
+        //   if (this.children[childrenIndex].type === "formula") {
+        //     dicesIndex++;
+        //     console.log('dicesIndex++formula',dicesIndex)
+        //   } else {
+        //     console.log(this);
+        //     let dices = this.diceResultArr[dicesIndex].diceArr.arr;
+        //     result += arrIntToString(dices);
+        //     dicesIndex++;
+        //     console.log(result);
+        //   }
+        // }
         //第二种情况，遍历到最后一个兄弟
         result += formulaItem.toString();
         console.log(dicesIndex);
         console.log(childrenIndex);
-        if (
-          this.children[childrenIndex].type !== "formula" &&
-          childrenIndex+1 == this.children.length - 1
-        ) {
-          console.log("enter the end");
-          console.log(this);
-          console.log(this.diceResultArr);
-          console.log(dicesIndex);
-          if (this.diceResultArr[dicesIndex] != undefined) {
-            let dices = this.diceResultArr[dicesIndex].diceArr.arr;
-            dicesIndex++;
-            let diceString = "[";
-            for (let dice of dices) {
-              diceString += dice+' ';
-
-            }
-            diceString += "]";
-            result += diceString;
-          }
-        }
-
-        childrenIndex++;
+        // if (
+        //   this.children[childrenIndex].type !== "formula" &&
+        //   childrenIndex+1 == this.children.length - 1
+        // ) {
+        //   console.log("enter the end");
+        //   console.log(this);
+        //   console.log(this.diceResultArr);
+        //   console.log(dicesIndex);
+        //   if (this.diceResultArr[dicesIndex] != undefined) {
+        //     console.log(this);
+        //     let dices = this.diceResultArr[dicesIndex].diceArr.arr;
+        //     result += arrIntToString(dices);
+        //     dicesIndex++;
+        //   }
+        // } 
       }
-      // if (formulaItem.type ==='diceFormula')
-      //   result+=formulaItem.diceResultArr[0]
+      childrenIndex++;
     }
     return result;
   };
   /*
   获取公式的值（实时运算）
   */
+  value:number|undefined
   getValue = () => {
     let result = 0;
     //定义一个栈，用于存放公式的子对象
@@ -169,6 +173,7 @@ class Formula {
         result -= stock[index] as number;
       }
     }
+    this.value=result;
     return result;
   };
 }
@@ -193,15 +198,22 @@ class Modifier extends Formula {
 class DiceFormula extends Formula {
   type = "diceFormula";
   diceRoller: DiceRoller | undefined;
+  diceResultArr = [] as any[];
   toString = () => {
     // if (this.diceRoller != undefined) return this.diceRoller.toString();
     // else return "undefined";
-    return this.text;
+    let s= this.text;
+    if (this.diceResultArr!=undefined)
+      s+=arrIntToString(this.diceResultArr[0].diceArr.arr)
+    return s;
   };
   getValue = () => {
     // if (this.diceRoller != undefined) return this.diceRoller.getValue();
     // else return 0;
-    return rollxdy(this.text).value;
+    let result=rollxdy(this.text)
+    this.diceResultArr=[]
+    this.diceResultArr.push(result)
+    return result.value;
   };
 }
 const parseDiceFormula = (str: string) => {
@@ -231,7 +243,7 @@ const parseDiceFormula = (str: string) => {
   //寻找操作符
   raw = str;
   const ops = [] as string[];
-  const patt = new RegExp(/[d+*/-]/);
+  const patt = new RegExp(/[+*/-]/);
   for (let index = 0; index <= raw.length; index++) {
     if (patt.test(raw[index])) {
       ops.push(raw[index]);
@@ -257,7 +269,7 @@ const parseDiceFormula = (str: string) => {
       resultFormula.children.push(formula);
       formulaIndex++;
     } else if (dicePackRegex.test(item)) {
-      //     console.log(item);
+          console.log(item);
       result.push(item);
       const df = new DiceFormula();
       df.text = item;
