@@ -8,7 +8,7 @@ type Weapon={
 }
 export class BasicAttack extends abstractAction implements ActionInterface{
     name ='基础攻击'
-    weapon={dice:'((2d6+2)+1d4+2)+2d4',bonus:0,attachment:""};
+    weapon={dice:'1d4',bonus:0,attachment:""};
     beUsed= (useMan: Object, targets: Object[]) => {
         const formula=parseDiceFormula(this.weapon.dice) 
         formula.getValue()
